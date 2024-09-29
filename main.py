@@ -10,6 +10,7 @@ def get_events():
         return jsonify({'message': 'Все события'}, events)
     else:
         return jsonify({'message': 'Событий нет'})
+
 @app.route('/api/v1/calendar', methods=['POST'])
 def create_event():
     data = request.json
