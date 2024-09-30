@@ -40,7 +40,17 @@ def create_event():
 @app.route('/api/v1/calendar/<int:event_id>/', methods=['PUT'])
 def update_event(event_id):
     data = request.json
-    title, text = data['title'], data['text']
+
+    if "|" in data:
+        try:
+            date, title, text = data.split("|")
+        except ValueError:
+            return jsonify({'error': 'Неверный формат данных, ожидается "date|title|text"'})
+    else:
+        data = request.json
+        if not data or 'title' not in data or 'text' not in data or 'date' not in data:
+            return jsonify({'error': 'Неверный формат JSON'})
+        title, text, date = data['title'], data['text'], data['date']
 
     for event in events.values():
         if event['id'] == event_id:
