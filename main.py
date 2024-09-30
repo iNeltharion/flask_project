@@ -14,7 +14,18 @@ def get_events():
 @app.route('/api/v1/calendar', methods=['POST'])
 def create_event():
     data = request.json
-    title, text, date = data['title'], data['text'], data['date']
+
+    if "|" in data:
+        try:
+            date, title, text = data.split("|")
+        except ValueError:
+            return jsonify({'error': 'Неверный формат данных, ожидается "date|title|text"'})
+    else:
+        data = request.json
+        if not data or 'title' not in data or 'text' not in data or 'date' not in data:
+            return jsonify({'error': 'Неверный формат JSON'})
+        title, text, date = data['title'], data['text'], data['date']
+
 
     if len(title) > 30 or len(text) > 200:
         return jsonify({'error': 'Превышена длина заголовка или текста'})
